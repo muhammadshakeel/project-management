@@ -1,10 +1,4 @@
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of ProjectManager
  *
@@ -38,44 +32,59 @@ class ProjectManager
 	 */
 	public function saveProject($project)
 	{
-		Helper::getInstance()->printObj($project->studentIds); //exit;
-		//$project->memebers = $project->studentIds;
-		//$project->advisors = $project->internalAdvisorIds;
-		$success = $project->save();
+		$transaction = Yii::app()->db->beginTransaction();
+		
+		try 
+		{
+			$success = $project->save();
+
+			if ($success)
+			{
+				$i = 0;
+				foreach ($project->studentIds as $studentId)
+				{
+					$projectStudent = new StudentProjectGroup();
+					$projectStudent->project_id = $project->id;
+					$projectStudent->student_id = $studentId;
+					$projectStudent->marks = $project->marks[$i];
+
+					$success = $success && $projectStudent->save(false);
+					$i++;
+				}
+
+				foreach ($project->internalAdvisorIds as $internalAdvisorId)
+				{
+					$internalAdvisor = new ProjectAdvisor();
+					$internalAdvisor->project_id = $project->id;
+					$internalAdvisor->teacher_id = $internalAdvisorId;
+					$internalAdvisor->type = AdvisorType::INTERNAL_ADVISOR;
+
+					$success = $success && $internalAdvisor->save(false);
+				}
+
+				foreach ($project->externalAdvisorIds as $externalAdvisorId)
+				{
+					$externalAdvisor = new ProjectAdvisor();
+					$externalAdvisor->project_id = $project->id;
+					$externalAdvisor->teacher_id = $externalAdvisorId;
+					$externalAdvisor->type = AdvisorType::EXTERNAL_ADVISOR;
+
+					$success = $success && $externalAdvisor->save(false);
+				}
+			}
+		}
+		catch (Exception $ex)
+		{
+			$success = FALSE;
+		}
 		
 		if ($success)
 		{
-			$i = 0;
-			foreach ($project->studentIds as $studentId)
-			{
-				$projectStudent = new StudentProjectGroup();
-				$projectStudent->project_id = $project->id;
-				$projectStudent->student_id = $studentId;
-				$projectStudent->marks = $project->marks[$i];
-
-				$success = $projectStudent->save(false);
-				$i++;
-			}
-			
-			foreach ($project->internalAdvisorIds as $internalAdvisorId)
-			{
-				$internalAdvisor = new ProjectAdvisor();
-				$internalAdvisor->project_id = $project->id;
-				$internalAdvisor->teacher_id = $internalAdvisorId;
-				$internalAdvisor->type = AdvisorType::INTERNAL_ADVISOR;
-
-				$success = $internalAdvisor->save(false);
-			}
-			
-			foreach ($project->externalAdvisorIds as $externalAdvisorId)
-			{
-				$externalAdvisor = new ProjectAdvisor();
-				$externalAdvisor->project_id = $project->id;
-				$externalAdvisor->teacher_id = $externalAdvisorId;
-				$externalAdvisor->type = AdvisorType::EXTERNAL_ADVISOR;
-
-				$success = $externalAdvisor->save(false);
-			}
+			$transaction->commit();
+		}
+		else
+		{
+			$transaction->rollback();
 		}
 		
 		return $success;

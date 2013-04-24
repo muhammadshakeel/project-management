@@ -19,8 +19,8 @@
         array(
             'class'=>'bootstrap.widgets.TbMenu',
             'items'=>array(
-                array('label'=>'Home', 'url'=>array('/site/index')),
-                array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
+                //array('label'=>'Home', 'url'=>array('/site/index')),
+                //array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
 				array('label'=>'Batch', 'url'=>'#', 'items'=>array(
 					array('label'=>'Create', 'url'=>array('/batch/create')),
 					array('label'=>'Manage', 'url'=>array('/batch/admin')),

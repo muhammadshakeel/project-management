@@ -212,7 +212,7 @@ class ProjectController extends Controller
 			$studentGrid = '';
 			foreach ($data->members as $student)
 			{
-				$studentGrid .= $student->full_name . '<br />';
+				$studentGrid .= '<div style="border-bottom:1px solid #000;">'.$student->full_name . '</div>';
 			}
 			return $studentGrid;
 		}
