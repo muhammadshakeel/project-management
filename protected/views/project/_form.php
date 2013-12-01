@@ -9,8 +9,10 @@
 $companies = CHtml::listData(Company::model()->findAll(array('select'=>'id, name', 'order'=>'name')), 'id', 'name') ;
 $categories = CHtml::listData(Category::model()->findAll(array('select'=>'id, name', 'order'=>'name')), 'id', 'name') ;
 $batches = CHtml::listData(Batch::model()->findAll(array('select'=>'id, batch', 'order'=>'batch')), 'id', 'batch') ;
-//$students = CHtml::listData(Student::model()->findAll(array('select'=>'id, full_name, roll_no', 'order'=>'full_name')), 'id', 'full_name') ;
-$students = array();
+$studentModels = Student::model()->findAll('batch_id=:batch_id', 
+                  array(':batch_id'=>$model->batch_id));
+$students = CHtml::listData($studentModels, 'id', 'full_name') ;
+//$students = array();
 $teachers = CHtml::listData(Teacher::model()->findAll(array('select'=>'id, full_name', 'order'=>'full_name')), 'id', 'full_name');
 //Helper::getInstance()->printObj($students);
 ?>
@@ -52,19 +54,19 @@ $teachers = CHtml::listData(Teacher::model()->findAll(array('select'=>'id, full_
 	<?php echo CHtml::label('Student & marks', 'studentIds', array('class'=>'control-label')); ?>
 	
 	<div class="controls">
-		<?php echo CHtml::activeDropDownList($model,'studentIds[0]', $students, array('class'=>'span3', 'rel'=>'ddlStudents')); ?>
-		<?php echo CHtml::activeTextField($model,'marks[0]',array('class'=>'span2','maxlength'=>5)); ?>
+		<?php echo CHtml::activeDropDownList($model,'studentIds[0]', $students, array('empty'=> 'Select Student', 'class'=>'span3', 'rel'=>'ddlStudents')); ?>
+		<?php echo CHtml::activeTextField($model,'marks[0]',array('class'=>'span2','maxlength'=>5, 'placeholder'=>'Marks')); ?>
 	</div>
 	<div class="controls">
-		<?php echo CHtml::activeDropDownList($model,'studentIds[1]', $students, array('class'=>'span3', 'rel'=>'ddlStudents')); ?>
+		<?php echo CHtml::activeDropDownList($model,'studentIds[1]', $students, array('empty'=> 'Select Student', 'class'=>'span3', 'rel'=>'ddlStudents')); ?>
 		<?php echo CHtml::activeTextField($model,'marks[1]',array('class'=>'span2','maxlength'=>5)); ?>
 	</div>
 	<div class="controls">
-		<?php echo CHtml::activeDropDownList($model,'studentIds[2]', $students, array('class'=>'span3', 'rel'=>'ddlStudents')); ?>
+		<?php echo CHtml::activeDropDownList($model,'studentIds[2]', $students, array('empty'=> 'Select Student', 'class'=>'span3', 'rel'=>'ddlStudents')); ?>
 		<?php echo CHtml::activeTextField($model,'marks[2]',array('class'=>'span2','maxlength'=>5)); ?>
 	</div>
 	<div class="controls">
-		<?php echo CHtml::activeDropDownList($model,'studentIds[3]', $students, array('class'=>'span3', 'rel'=>'ddlStudents')); ?>
+		<?php echo CHtml::activeDropDownList($model,'studentIds[3]', $students, array('empty'=> 'Select Student', 'class'=>'span3', 'rel'=>'ddlStudents')); ?>
 		<?php echo CHtml::activeTextField($model,'marks[3]',array('class'=>'span2','maxlength'=>5)); ?>
 	</div>
 </div>

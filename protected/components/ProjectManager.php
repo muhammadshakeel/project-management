@@ -43,12 +43,15 @@ class ProjectManager
 				$i = 0;
 				foreach ($project->studentIds as $studentId)
 				{
-					$projectStudent = new StudentProjectGroup();
-					$projectStudent->project_id = $project->id;
-					$projectStudent->student_id = $studentId;
-					$projectStudent->marks = $project->marks[$i];
+					if (!empty($studentId))
+					{
+						$projectStudent = new StudentProjectGroup();
+						$projectStudent->project_id = $project->id;
+						$projectStudent->student_id = $studentId;
+						$projectStudent->marks = $project->marks[$i];
 
-					$success = $success && $projectStudent->save(false);
+						$success = $success && $projectStudent->save(false);
+					}
 					$i++;
 				}
 
@@ -75,7 +78,15 @@ class ProjectManager
 		}
 		catch (Exception $ex)
 		{
-			$success = FALSE;
+			if (YII_DEBUG)
+			{
+				$transaction->rollback(); throw $ex;
+				$success = false;
+			}
+			else 
+			{
+				$success = FALSE;
+			}
 		}
 		
 		if ($success)

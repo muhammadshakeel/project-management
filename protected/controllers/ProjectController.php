@@ -64,17 +64,21 @@ class ProjectController extends Controller
 		$model=new Project;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		//$this->performAjaxValidation($model);
 
 		if(isset($_POST['Project']))
 		{
 			$model->attributes=$_POST['Project'];
-			//Helper::getInstance()->printObj($_POST);
-			//Helper::getInstance()->printObj($model); exit;
 			if ($model->validate())
 			{
 				if(ProjectManager::getInstance()->saveProject($model))
-					$this->redirect(array('view','id'=>$model->id));
+				{
+					$this->redirect(array('admin','id'=>$model->id));
+				}
+				else
+				{
+					Yii::app()->user->setFlash('error', 'Project could not be created');
+				}
 			}
 		}
 
@@ -166,6 +170,8 @@ class ProjectController extends Controller
                   array(':batch_id'=>(int) $_POST['Project']['batch_id']));
  
 		$data=CHtml::listData($data,'id','full_name');
+		echo CHtml::tag('option',
+					   array('value'=>''),CHtml::encode('Select Student'),true);
 		foreach($data as $value=>$name)
 		{
 			echo CHtml::tag('option',
